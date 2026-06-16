@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if not logado %}
+        <form method="POST" action="{{url_for('logar')}}">
+
+            {{ form.hidden_tag() }}
+
+            {{form.nome.label}}
+            {{form.nome()}}
+            {{form.senha.label}}
+            {{form.senha()}}
+        {{form.submit()}}
+
+{%else%}    
+
+    <h2>📊 Visão Geral</h2>
+
+    <h3>Desenvolvedores Cadastrados</h3>
+    <ul>
+        {% for dev in developers %}
+        <li><strong>{{ dev.nome }}</strong> (ID: {{ dev.id }}) 
+        <form method="POST" action="{{ url_for('deletar_usuario', id_usuario=dev.id) }}"
+                style="margin: 0; display: inline;padding:0%">
+                <button type="submit" class="btn-delete" style="margin: 0; border: none; cursor: pointer;"
+                    onclick="return confirm('Tem certeza que deseja deletar este usuário?')">🗑️ Deletar</button>
+                {{ form.hidden_tag() }}
+            </form>
+        </li>
+        {% else %}
+        <li>Nenhum desenvolvedor cadastrado ainda.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Tarefas Existentes</h3>
+    <ul>
+        {% for tarefa in tarefas %}
+        <li>
+            <strong>{{ tarefa.nome }}</strong><br>
+            📝 {{ tarefa.descricao or 'Sem descrição' }} |
+            ⚡ Prioridade: {{ tarefa.prioridade }}/10 |
+            📅 Entrega: {{ tarefa.prazo.strftime('%d/%m/%Y') }} |
+            👤 Dev: {{ tarefa.desenvolvedor.nome }}
+        </li>
+        {% else %}
+        <li>Nenhuma tarefa criada.</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}
